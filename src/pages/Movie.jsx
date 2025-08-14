@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useWishlist } from "../context/WishlistContext";
+import { Heart } from "lucide-react";
 
 import RatingStars from "../components/RatingStars";
 import MovieCarousel from "../components/MovieCarousel";
@@ -14,6 +16,8 @@ const Movie = () => {
   const [related, setRelated] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { addToWishlist, removeFromWishlist, isMovieInWishlist } =
+    useWishlist();
 
   const getMovieData = async (url) => {
     const res = await fetch(url);
@@ -63,6 +67,16 @@ const Movie = () => {
     );
   }
 
+  const isInWishlist = isMovieInWishlist(movie.id);
+
+  const handleWishlistToggle = () => {
+    if (isInWishlist) {
+      removeFromWishlist(movie.id);
+    } else {
+      addToWishlist(movie);
+    }
+  };
+
   return (
     <div className="bg-[#F8F3ED] text-[#333] p-4 md:p-8">
       <main className="container mx-auto">
@@ -78,10 +92,25 @@ const Movie = () => {
             </div>
             <Link
               to={`/movie/${id}/rate`}
-              className="mt-4 bg-rose-300 text-gray-800 font-bold py-2 px-8 rounded-lg hover:bg-rose-400 transition-colors duration-300"
+              className="mt-4 bg-rose-300 text-gray-800 font-bold py-2 px-8 rounded-lg hover:bg-rose-400 transition-colors duration-300 w-full text-center"
             >
               Avaliar
             </Link>
+            <button
+              onClick={handleWishlistToggle}
+              className={`mt-4 w-full flex cursor-pointer items-center justify-center font-bold py-2 px-8 rounded-lg transition-colors duration-300 ${
+                isInWishlist
+                  ? "bg-pink-500 text-white hover:bg-pink-600"
+                  : "bg-gray-300 text-gray-800 hover:bg-gray-400"
+              }`}
+            >
+              <Heart
+                className="mr-2"
+                size={20}
+                fill={isInWishlist ? "currentColor" : "none"}
+              />
+              {isInWishlist ? "Remover da Lista" : "Adicionar à Lista"}
+            </button>
           </div>
 
           <div className="md:col-span-2">

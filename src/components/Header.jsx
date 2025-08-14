@@ -71,7 +71,7 @@ const Header = () => {
             Lista de Desejos
           </NavLink>
           <NavLink
-            to="/my-ratings"
+            to="/my-reviews"
             className="font-semibold hover:text-rose-500"
             style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
           >
@@ -101,7 +101,7 @@ const Header = () => {
               Lista de Desejos
             </NavLink>
             <NavLink
-              to="/my-ratings"
+              to="/my-reviews"
               className="font-semibold"
               style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
             >
