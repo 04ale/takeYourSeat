@@ -1,13 +1,12 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import RatingStars from './RatingStars'; // 1. Importe o componente de estrelas
+import React from "react";
+import { Link } from "react-router-dom";
+import RatingStars from "./RatingStars";
 
 function MovieCard({ movie, showLink = true }) {
   const imageUrl = import.meta.env.VITE_IMG;
 
   return (
     <div className="w-full max-w-[180px] flex flex-col items-center text-center">
-
       {movie?.poster_path && (
         <img
           src={imageUrl + movie.poster_path}
@@ -16,8 +15,7 @@ function MovieCard({ movie, showLink = true }) {
         />
       )}
       <h2 className="mt-2 text-sm font-semibold">{movie.title}</h2>
-      
-      {/* 2. Substitua o <p> da avaliação pelo novo componente */}
+
       <div className="mt-1">
         <RatingStars rating={movie.vote_average} />
       </div>
@@ -30,7 +28,6 @@ function MovieCard({ movie, showLink = true }) {
           Ver detalhes
         </Link>
       )}
-
     </div>
   );
 }

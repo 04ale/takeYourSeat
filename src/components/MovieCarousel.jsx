@@ -1,13 +1,11 @@
-// src/components/MovieCarousel.jsx
+import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
+import { useRef } from "react";
+import { Link } from "react-router-dom";
 
-import { ChevronLeft, ChevronRight, Flame } from 'lucide-react'; 
-import { useRef } from 'react';
-import { Link } from 'react-router-dom';
-
-const MovieCarousel = ({ movies, title, showFlameIcon = false }) => { 
+const MovieCarousel = ({ movies, title, showFlameIcon = false }) => {
   // Se não houver filmes, não renderiza a seção
   if (!movies || movies.length === 0) {
-    return null; 
+    return null;
   }
 
   const scrollRef = useRef(null);
@@ -15,8 +13,10 @@ const MovieCarousel = ({ movies, title, showFlameIcon = false }) => {
   const scroll = (direction) => {
     const { current } = scrollRef;
     const scrollAmount = 300;
-    if (direction === 'left') current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    if (direction === 'right') current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    if (direction === "left")
+      current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    if (direction === "right")
+      current.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
   return (
@@ -28,7 +28,7 @@ const MovieCarousel = ({ movies, title, showFlameIcon = false }) => {
 
       <div className="flex items-center">
         <button
-          onClick={() => scroll('left')}
+          onClick={() => scroll("left")}
           className="absolute -left-4 z-10 bg-white bg-opacity-70 hover:bg-opacity-90 p-2 rounded-full shadow-md hidden md:block"
         >
           <ChevronLeft className="w-6 h-6 cursor-pointer" />
@@ -51,7 +51,7 @@ const MovieCarousel = ({ movies, title, showFlameIcon = false }) => {
               <div className="p-2 text-sm font-semibold">
                 <h3>{movie.title}</h3>
                 <Link to={`/movie/${movie.id}`}>
-                  <button className='bg-rose-200 rounded-md pl-2 pr-2 pt-1 pb-1 mt-2 hover:bg-rose-300 cursor-pointer transition-colors duration-300'>
+                  <button className="bg-rose-200 rounded-md pl-2 pr-2 pt-1 pb-1 mt-2 hover:bg-rose-300 cursor-pointer transition-colors duration-300">
                     Ver mais
                   </button>
                 </Link>
@@ -61,7 +61,7 @@ const MovieCarousel = ({ movies, title, showFlameIcon = false }) => {
         </div>
 
         <button
-          onClick={() => scroll('right')}
+          onClick={() => scroll("right")}
           className="absolute -right-4 z-10 bg-white bg-opacity-70 hover:bg-opacity-90 p-2 rounded-full shadow-md hidden md:block"
         >
           <ChevronRight className="w-6 h-6 cursor-pointer" />

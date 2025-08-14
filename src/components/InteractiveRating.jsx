@@ -1,11 +1,11 @@
 // src/components/InteractiveRating.jsx
 
-import React, { useState } from 'react';
-import { Star } from 'lucide-react';
+import React, { useState } from "react";
+import { Star } from "lucide-react";
 
 const InteractiveRating = () => {
-  const [rating, setRating] = useState(0); // Armazena a avaliação clicada
-  const [hover, setHover] = useState(0); // Armazena a avaliação em hover
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
 
   return (
     <div className="flex items-center">
@@ -19,12 +19,14 @@ const InteractiveRating = () => {
               name="rating"
               value={ratingValue}
               onClick={() => setRating(ratingValue)}
-              className="hidden" // Esconde o botão de rádio real
+              className="hidden"
             />
             <Star
               className="cursor-pointer"
-              color={ratingValue <= (hover || rating) ? '#ffc107' : '#e4e5e9'}
-              fill={ratingValue <= (hover || rating) ? '#ffc107' : 'transparent'}
+              color={ratingValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
+              fill={
+                ratingValue <= (hover || rating) ? "#ffc107" : "transparent"
+              }
               size={30}
               onMouseEnter={() => setHover(ratingValue)}
               onMouseLeave={() => setHover(0)}
