@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Search, User, Menu, X } from "lucide-react";
-import logo from "../../img/Your_movie_guide-removebg.png";
+import logo from "../assets/img/logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,9 +26,6 @@ const Header = () => {
       <div className="container mx-auto flex justify-between items-center p-4 gap-4">
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
           <img src={logo} alt="Take Your Seat Logo" className="h-12 md:h-16" />
-          <span className="text-2xl font-bold text-rose-500 hidden sm:block">
-            Take Your Seat
-          </span>
         </Link>
 
         <form onSubmit={handleSubmit} className="relative md:hidden">

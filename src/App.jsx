@@ -1,17 +1,14 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom'; // 1. Importe o Outlet
-import Header from './components/Header';
-import Footer from './components/Footer';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function App() {
   return (
-    <div className='App'>
-      <Header /> 
-
+    <div className="App">
       <main>
-        <Outlet /> 
+        <Outlet />
       </main>
-      <Footer />
     </div>
   );
 }
