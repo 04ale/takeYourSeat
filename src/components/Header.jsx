@@ -16,7 +16,7 @@ const Header = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!searchValue.trim()) return;
-    navigate(`/search?q=${searchValue}`);
+    navigate(`/search?query=${searchValue}`);
     setSearchValue("");
     setIsMenuOpen(false);
   };

@@ -1,4 +1,3 @@
-// src/pages/Register.jsx
 
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,27 +7,25 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [email, setEmail] = useState("");
 
-  const [error, setError] = useState("");
+  
+  const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError("");
+    setErrors({});
     setSuccess("");
 
     if (password !== confirmPassword) {
-      setError("As senhas não coincidem!");
+      setErrors({ confirmPassword: "As senhas não coincidem!" });
       return;
     }
 
     try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await api.post("/api/auth/register", {
+      await api.post("/api/auth/register", {
         username,
-        email,
         password,
       });
 
@@ -39,20 +36,19 @@ const Register = () => {
       setTimeout(() => {
         navigate("/login");
       }, 2000);
+
     } catch (err) {
+      
       console.error("Erro completo da API:", err.response);
 
-      if (err.response && err.response.data) {
-        const errorMessage =
-          typeof err.response.data === "object" && err.response.data.message
-            ? err.response.data.message
-            : err.response.data;
-        setError(errorMessage);
+      if (err.response && err.response.data && err.response.data.errors) {
+        setErrors(err.response.data.errors);
       } else {
-        setError("Ocorreu um erro durante o cadastro. Tente novamente.");
+        setErrors({ form: "Ocorreu um erro durante o cadastro. Tente novamente." });
       }
     }
   };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#F8F3ED]">
       <form
@@ -61,10 +57,8 @@ const Register = () => {
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Criar Conta</h2>
 
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {success && (
-          <p className="text-green-500 text-center mb-4">{success}</p>
-        )}
+        {errors.form && <p className="text-red-500 text-center mb-4">{errors.form}</p>}
+        {success && <p className="text-green-500 text-center mb-4">{success}</p>}
 
         <div className="mb-4">
           <label className="block mb-2">Usuário:</label>
@@ -75,17 +69,9 @@ const Register = () => {
             className="w-full p-2 border rounded"
             required
           />
+          {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
         </div>
-        <div className="mb-4">
-          <label className="block mb-2">Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
+
         <div className="mb-4">
           <label className="block mb-2">Senha:</label>
           <input
@@ -95,7 +81,9 @@ const Register = () => {
             className="w-full p-2 border rounded"
             required
           />
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
         </div>
+
         <div className="mb-6">
           <label className="block mb-2">Confirmar Senha:</label>
           <input
@@ -105,7 +93,9 @@ const Register = () => {
             className="w-full p-2 border rounded"
             required
           />
+          {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
         </div>
+
         <button
           type="submit"
           className="w-full bg-rose-300 text-gray-800 font-bold py-2 rounded-lg hover:bg-rose-400 transition-colors"
