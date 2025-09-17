@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../api/api";
+import {publicApi} from "../api/api";
 import banner from "../assets/img/banner.jpg";
 import logo from "../assets/img/logo.png";
 
@@ -16,7 +16,7 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await api.post("/api/auth/login", {
+      const response = await publicApi.post("/api/auth/login", {
         username,
         password,
       });
@@ -41,8 +41,8 @@ const Login = () => {
             <div className="flex flex-col w-full justify-center items-center gap-4">
               <input
                 className="bg-rose-300/20 p-4 w-full max-lg:w-[340px] rounded-2xl"
-                type="email"
-                placeholder="E-mail:"
+                type="text"
+                placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />

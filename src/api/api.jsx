@@ -1,16 +1,25 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "http://localhost:8080", //
+const baseURL = "http://localhost:8080";
+
+// 1. Instância para chamadas PÚBLICAS (não envia o token)
+// Use esta para: registro, login, busca de filmes, etc.
+const publicApi = axios.create({
+  baseURL,
 });
 
-api.interceptors.request.use(
+// 2. Instância para chamadas PRIVADAS (envia o token)
+// Use esta para: lista de desejos, criar/editar avaliações, perfil do usuário, etc.
+const privateApi = axios.create({
+  baseURL,
+});
+
+// O interceptor é adicionado APENAS à instância privada
+privateApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("jwt_token");
+    const token = localStorage.getItem("jwt_token"); // Garanta que a chave é "jwt_token"
     if (token) {
-      if (config.url.startsWith("/api/")) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -19,4 +28,5 @@ api.interceptors.request.use(
   }
 );
 
-export default api;
+// 3. Exporta as duas instâncias para serem usadas no resto da aplicação
+export { publicApi, privateApi };
