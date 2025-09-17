@@ -12,7 +12,6 @@ const Header = () => {
     color: "#E11D48",
     fontWeight: "bold",
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!searchValue.trim()) return;
@@ -22,7 +21,11 @@ const Header = () => {
   };
 
   return (
+
+
+    
     <header className="bg-rose-100 text-[#333] shadow-md sticky top-0 z-50">
+
       <div className="container mx-auto flex justify-between items-center p-4 gap-4">
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
           <img src={logo} alt="Take Your Seat Logo" className="h-12 md:h-16" />

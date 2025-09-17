@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import api from "../api/api";
+import {privateApi} from "../api/api";
 
 const WishlistContext = createContext();
 
@@ -11,7 +11,7 @@ export const WishlistProvider = ({ children }) => {
     if (localStorage.getItem("jwt_token")) {
       try {
         setLoading(true);
-        const response = await api.get("/api/wishlist");
+        const response = await privateApi.get("/api/wishlist");
         setWishlist(response.data || []);
       } catch (error) {
         console.error("Falha ao buscar a lista de desejos:", error);
@@ -34,7 +34,7 @@ export const WishlistProvider = ({ children }) => {
 
   const addToWishlist = async (movie) => {
     try {
-      await api.post(`/api/wishlist/${movie.id}`);
+      await privateApi.post(`/api/wishlist/${movie.id}`);
       setWishlist((prev) => [...prev, movie]);
     } catch (error) {
       console.error("Erro ao adicionar à lista de desejos:", error);
@@ -44,7 +44,7 @@ export const WishlistProvider = ({ children }) => {
 
   const removeFromWishlist = async (movieId) => {
     try {
-      await api.delete(`/api/wishlist/${movieId}`);
+      await privateApi.delete(`/api/wishlist/${movieId}`);
       setWishlist((prev) => prev.filter((movie) => movie.id !== movieId));
     } catch (error) {
       console.error("Erro ao remover da lista de desejos:", error);

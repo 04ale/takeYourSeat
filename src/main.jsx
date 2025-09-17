@@ -12,6 +12,7 @@ import Register from "./pages/Register.jsx";
 import WishList from "./pages/WishList.jsx";
 import Profile from "./pages/Profile.jsx";
 import MyReviews from "./pages/MyReviews.jsx";
+import SearchResults from './pages/SearchResults'; 
 import { WishlistProvider } from "./context/WishlistContext.jsx";
 
 createRoot(document.getElementById("root")).render(

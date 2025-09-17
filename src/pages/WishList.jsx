@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useWishlist } from "../context/WishlistContext";
 import WishlistItem from "../components/WishlistItem";
+
 const Wishlist = () => {
   const { wishlist, loading } = useWishlist();
   const [currentPage, setCurrentPage] = useState(1);

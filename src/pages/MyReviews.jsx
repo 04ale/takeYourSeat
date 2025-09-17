@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../api/api";
+import {privateApi} from "../api/api";
 import UserReviewItem from "../components/UserReviewItem";
 
 const MyReviews = () => {
@@ -10,7 +10,7 @@ const MyReviews = () => {
     const fetchUserReviews = async () => {
       try {
         setLoading(true);
-        const response = await api.get("/api/reviews/me");
+        const response = await privateApi.get("/api/reviews/me");
         setReviews(response.data || []);
       } catch (error) {
         console.error("Erro ao buscar avaliações:", error);

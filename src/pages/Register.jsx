@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../api/api";
+import {publicApi} from "../api/api";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -24,7 +24,7 @@ const Register = () => {
     }
 
     try {
-      await api.post("/api/auth/register", {
+      await publicApi.post("/api/auth/register", {
         username,
         password,
       });
