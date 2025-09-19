@@ -24,7 +24,7 @@ const Header = () => {
 
 
     
-    <header className="bg-rose-100 text-[#333] shadow-md sticky top-0 z-50">
+    <header className="bg-rose-100 text-[#333] shadow-md sticky top-0 z-50 ">
 
       <div className="container mx-auto flex justify-between items-center p-4 gap-4">
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
@@ -65,14 +65,14 @@ const Header = () => {
           </form>
           <NavLink
             to="/wishlist"
-            className="font-semibold hover:text-rose-500"
+            className="font-semibold hover:text-rose-500 duration-300 transition-all"
             style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
           >
             Lista de Desejos
           </NavLink>
           <NavLink
             to="/my-reviews"
-            className="font-semibold hover:text-rose-500"
+            className="font-semibold hover:text-rose-500 duration-300 transition-all"
             style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
           >
             Minhas Avaliações
