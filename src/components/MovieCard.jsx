@@ -1,17 +1,19 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RatingStars from "./RatingStars";
 
 function MovieCard({ movie, showLink = true }) {
   const imageUrl = import.meta.env.VITE_IMG;
+  const nav = useNavigate();
 
   return (
     <div className="w-full max-w-[180px] flex flex-col items-center text-center">
       {movie?.poster_path && (
         <img
+        onClick={()=> nav(`/movie/${movie.id}`)}
           src={imageUrl + movie.poster_path}
           alt={movie.title}
-          className="w-full rounded-md"
+          className="w-full rounded-md cursor-pointer"
         />
       )}
       <h2 className="mt-2 text-sm font-semibold">{movie.title}</h2>

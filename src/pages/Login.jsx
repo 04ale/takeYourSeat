@@ -56,7 +56,7 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className="px-7 cursor-pointer font-semibold p-4 bg-rose-300 text-white rounded-2xl"
+              className="px-7 duration-300 transition-all cursor-pointer font-semibold p-4 bg-rose-300 text-white rounded-2xl"
             >
               Login
             </button>

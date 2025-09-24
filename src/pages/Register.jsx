@@ -98,7 +98,7 @@ const Register = () => {
 
         <button
           type="submit"
-          className="w-full bg-rose-300 text-gray-800 font-bold py-2 rounded-lg hover:bg-rose-400 transition-colors"
+          className="w-full duration-300 transition-all bg-rose-300 text-gray-800 font-bold py-2 rounded-lg hover:bg-rose-400 transition-colors"
           disabled={!!success}
         >
           Registrar
