@@ -5,7 +5,9 @@ import {publicApi} from "../api/api";
 
 const Register = () => {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   
@@ -26,7 +28,9 @@ const Register = () => {
     try {
       await publicApi.post("/api/auth/register", {
         username,
+        email,
         password,
+        dateOfBirth,
       });
 
       setSuccess(
@@ -41,10 +45,16 @@ const Register = () => {
       
       console.error("Erro completo da API:", err.response);
 
-      if (err.response && err.response.data && err.response.data.errors) {
-        setErrors(err.response.data.errors);
+       if (err.response && err.response.data) {
+        if (err.response.data.errors) {
+          setErrors(err.response.data.errors);
+        } else if (err.response.data.message) {
+          setErrors({ form: err.response.data.message });
+        } else {
+          setErrors({ form: "Ocorreu um erro durante o cadastro. Tente novamente." });
+        }
       } else {
-        setErrors({ form: "Ocorreu um erro durante o cadastro. Tente novamente." });
+        setErrors({ form: "Não foi possível conectar ao servidor. Verifique sua rede." });
       }
     }
   };
@@ -73,6 +83,28 @@ const Register = () => {
         </div>
 
         <div className="mb-4">
+          <label className="block mb-2">Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-2 border rounded"
+            required
+          />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+        </div>
+         <div>
+                <label htmlFor="dob" className="block text-sm font-medium text-gray-600 mb-1">Data de Nascimento:</label>
+                <input
+                  id="dob"
+                  className="bg-rose-300/20 p-4 w-full max-lg:w-[340px] rounded-2xl"
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  required
+                />
+        </div>
+        <div className="mb-4">
           <label className="block mb-2">Senha:</label>
           <input
             type="password"
@@ -98,7 +130,7 @@ const Register = () => {
 
         <button
           type="submit"
-          className="w-full duration-300 transition-all bg-rose-300 text-gray-800 font-bold py-2 rounded-lg hover:bg-rose-400 transition-colors"
+          className="w-full duration-300 bg-rose-300 text-gray-800 font-bold py-2 rounded-lg hover:bg-rose-400 transition-colors"
           disabled={!!success}
         >
           Registrar

@@ -1,39 +1,40 @@
-// src/components/InteractiveRating.jsx
+import React, { useState } from 'react';
+import { Star } from 'lucide-react';
 
-import React, { useState } from "react";
-import { Star } from "lucide-react";
-
-const InteractiveRating = () => {
-  const [rating, setRating] = useState(0);
-  const [hover, setHover] = useState(0);
+const InteractiveRating = ({ currentRating, onRatingChange }) => {
+  // Estado local apenas para o efeito visual do "hover" (passar o mouse)
+  const [hoverRating, setHoverRating] = useState(0);
 
   return (
-    <div className="flex items-center">
-      {[...Array(5)].map((_, index) => {
-        const ratingValue = index + 1;
+    <div className="flex items-center space-x-1">
+      {[1, 2, 3, 4, 5].map((starValue) => {
+        // A estrela estará preenchida se o valor dela for menor ou igual
+        // à nota do hover ou à nota clicada (o rating atual).
+        const isFilled = starValue <= (hoverRating || currentRating);
 
         return (
-          <label key={index}>
-            <input
-              type="radio"
-              name="rating"
-              value={ratingValue}
-              onClick={() => setRating(ratingValue)}
-              className="hidden"
-            />
-            <Star
-              className="cursor-pointer"
-              color={ratingValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
-              fill={
-                ratingValue <= (hover || rating) ? "#ffc107" : "transparent"
-              }
-              size={30}
-              onMouseEnter={() => setHover(ratingValue)}
-              onMouseLeave={() => setHover(0)}
-            />
-          </label>
+          <Star
+            key={starValue}
+            size={40}
+            className={`cursor-pointer transition-colors duration-200 ${
+              isFilled ? 'text-yellow-400' : 'text-gray-300'
+            }`}
+            fill={isFilled ? 'currentColor' : 'none'}
+            // Quando o mouse entra, atualizamos o estado de hover
+            onMouseEnter={() => setHoverRating(starValue)}
+            // Quando o mouse sai, limpamos o estado de hover
+            onMouseLeave={() => setHoverRating(0)}
+            // QUANDO CLICAMOS, CHAMAMOS A FUNÇÃO DO PAI!
+            onClick={() => onRatingChange(starValue)}
+          />
         );
       })}
+      {/* Opcional: Mostra a nota selecionada ao lado */}
+      {currentRating > 0 && (
+        <span className="ml-4 text-xl font-bold text-gray-700">
+          {currentRating}/5
+        </span>
+      )}
     </div>
   );
 };

@@ -1,23 +1,28 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:8080";
+// A baseURL foi REMOVIDA. Isso é crucial.
+// Agora, chamadas como `publicApi.post('/auth/login')` se tornarão
+// uma requisição para '/api/auth/login' por causa dos interceptors abaixo.
 
-// 1. Instância para chamadas PÚBLICAS (não envia o token)
-// Use esta para: registro, login, busca de filmes, etc.
-const publicApi = axios.create({
-  baseURL,
-});
+const publicApi = axios.create();
+const privateApi = axios.create();
 
-// 2. Instância para chamadas PRIVADAS (envia o token)
-// Use esta para: lista de desejos, criar/editar avaliações, perfil do usuário, etc.
-const privateApi = axios.create({
-  baseURL,
-});
+// Interceptor para garantir que TODAS as chamadas comecem com /api
+const addApiPrefix = (config) => {
+  if (config.url && !config.url.startsWith('/api')) {
+    config.url = `/api${config.url}`;
+  }
+  return config;
+};
 
-// O interceptor é adicionado APENAS à instância privada
+publicApi.interceptors.request.use(addApiPrefix);
+privateApi.interceptors.request.use(addApiPrefix);
+
+
+// Interceptor que adiciona o token de autenticação APENAS à instância privada
 privateApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("jwt_token"); // Garanta que a chave é "jwt_token"
+    const token = localStorage.getItem("jwt_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -28,5 +33,4 @@ privateApi.interceptors.request.use(
   }
 );
 
-// 3. Exporta as duas instâncias para serem usadas no resto da aplicação
 export { publicApi, privateApi };

@@ -1,9 +1,11 @@
 import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
 import { useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MovieCarousel = ({ movies, title, showFlameIcon = false }) => {
-  // Se não houver filmes, não renderiza a seção
+
+  const nav = useNavigate()
+
   if (!movies || movies.length === 0) {
     return null;
   }
@@ -37,11 +39,12 @@ const MovieCarousel = ({ movies, title, showFlameIcon = false }) => {
         <div
           ref={scrollRef}
           className="flex overflow-x-auto space-x-4 p-4 scroll-smooth scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent"
-        >
+          >
           {movies.map((movie) => (
             <div
               key={movie.id}
-              className="min-w-[160px] max-w-[160px] flex-shrink-0 rounded overflow-hidden shadow-md bg-white"
+              className="hover:scale-105 duration-300 transition-all cursor-pointer min-w-[160px] max-w-[160px] flex-shrink-0 rounded overflow-hidden shadow-md bg-white"
+              onClick={()=> nav(`/movie/${movie.id}`)}
             >
               <img
                 src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
@@ -50,11 +53,6 @@ const MovieCarousel = ({ movies, title, showFlameIcon = false }) => {
               />
               <div className="p-2 text-sm font-semibold">
                 <h3>{movie.title}</h3>
-                <Link to={`/movie/${movie.id}`}>
-                  <button className="bg-rose-200 rounded-md pl-2 pr-2 pt-1 pb-1 mt-2 hover:bg-rose-300 cursor-pointer transition-colors duration-300">
-                    Ver mais
-                  </button>
-                </Link>
               </div>
             </div>
           ))}

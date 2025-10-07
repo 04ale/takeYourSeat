@@ -11,28 +11,38 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import WishList from "./pages/WishList.jsx";
 import Profile from "./pages/Profile.jsx";
+import ProtectedRoute from './components/ProtectedRoute'; 
 import MyReviews from "./pages/MyReviews.jsx";
 import SearchResults from './pages/SearchResults'; 
 import { WishlistProvider } from "./context/WishlistContext.jsx";
+import { Toaster } from "sonner";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <WishlistProvider>
       <BrowserRouter>
-        <Routes>
+      <AuthProvider>
+      <WishlistProvider>
+        <Routes> 
+        <Route path="/login" element={<Login />} />
           <Route element={<App />}>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/wishlist" element={<WishList />} />
-            <Route path="/my-reviews" element={<MyReviews />} />
-            <Route path="movie/:id" element={<Movie />} />
-            <Route path="movie/:id/rate" element={<RateMovie />} />
-             <Route path="/search" element={<SearchResults />} />
+            <Route path="/movie/:id" element={<Movie />} />
+            <Route path="/search" element={<SearchResults />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/wishlist" element={<WishList />} />
+              <Route path="/my-reviews" element={<MyReviews />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/movie/:id/rate" element={<RateMovie />} />
+            </Route>
           </Route>
+          
         </Routes>
+        </WishlistProvider>
+        </AuthProvider>
+        <Toaster richColors position="bottom-left" visibleToasts={1}/>
       </BrowserRouter>
-    </WishlistProvider>
+    
   </StrictMode>
 );

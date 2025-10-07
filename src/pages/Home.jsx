@@ -1,16 +1,14 @@
-// src/pages/Home.jsx
-
 import React, { useState, useEffect } from 'react';
 import MovieCarousel from '../components/MovieCarousel';
 import HeroBanner from '../components/HeroBanner';
 import MovieCard from '../components/MovieCard';
+import { toast } from 'sonner';
 
-const BASE_URL = import.meta.env.VITE_API; 
-const API_KEY = import.meta.env.VITE_API_KEY; // Sua chave de API
-
+// A função de busca agora é agnóstica à fonte de dados.
+// Ela simplesmente busca de um endpoint do NOSSO backend.
 const fetchMovies = async (endpoint) => {
-  const separator = endpoint.includes('?') ? '&' : '?';
-  const url = `${BASE_URL}${endpoint}${separator}api_key=${API_KEY}&language=pt-BR`;
+  // A URL agora aponta para a nossa API, que será redirecionada pelo proxy do Vite.
+  const url = `/api/movies/${endpoint}`;
   
   try {
     const res = await fetch(url);
@@ -19,8 +17,10 @@ const fetchMovies = async (endpoint) => {
       return [];
     }
     const data = await res.json();
-    return data.results && Array.isArray(data.results) ? data.results : [];
+    // Nosso backend retorna o array de filmes diretamente.
+    return Array.isArray(data) ? data : [];
   } catch (error) {
+    toast.error(`Falha na busca para o endpoint ${endpoint}:`, error);
     console.error(`Falha na busca para o endpoint ${endpoint}:`, error);
     return [];
   }
@@ -30,7 +30,7 @@ const Home = () => {
   const [heroMovie, setHeroMovie] = useState(null);
   const [popularMovies, setPopularMovies] = useState([]);
   const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
-  const [upcomingMovies, setUpcomingMovies] = useState([]);
+  const [upcomingMovies, setUpcomingMovies] = useState([]); // Mantido caso você crie o endpoint
   const [actionMovies, setActionMovies] = useState([]);
   const [comedyMovies, setComedyMovies] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
@@ -40,13 +40,14 @@ const Home = () => {
     const loadAllMovies = async () => {
       setLoading(true);
       
+      // As chamadas agora usam os nomes dos endpoints do nosso backend.
       const results = await Promise.allSettled([
-        fetchMovies('movie/popular'),
-        fetchMovies('movie/now_playing'),
-        fetchMovies('movie/upcoming'),
-        fetchMovies('discover/movie?with_genres=28'),
-        fetchMovies('discover/movie?with_genres=35'),
-        fetchMovies('movie/top_rated')
+        fetchMovies('popular'),
+        fetchMovies('now-playing'),
+        fetchMovies('upcoming'), // Lembre-se de criar este endpoint no backend
+        fetchMovies('genre/28'),   // Endpoint para Ação
+        fetchMovies('genre/35'),   // Endpoint para Comédia
+        fetchMovies('top-rated')
       ]);
 
       const filterMoviesWithPoster = (movies) => movies.filter(movie => movie.poster_path);
@@ -61,7 +62,8 @@ const Home = () => {
       if (popular.length > 0) {
         const hero = popular.find(movie => movie.backdrop_path);
         setHeroMovie(hero || popular[0]);
-        setPopularMovies(popular.slice(1));
+        // Remove o filme do banner da lista do carrossel para não repetir
+        setPopularMovies(popular.filter(movie => movie.id !== (hero || popular[0]).id));
       }
 
       setNowPlayingMovies(nowPlaying);
@@ -81,7 +83,7 @@ const Home = () => {
   }
 
   return (
-    <div className="bg-[#F8F3ED] text-[#333]">
+    <div className="bg-[#F8F3ED] text-[#333] w-full h-full">
       <HeroBanner movie={heroMovie} />
       
       <main className="container mx-auto py-8">

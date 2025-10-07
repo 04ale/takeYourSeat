@@ -6,60 +6,58 @@ import { Heart } from "lucide-react";
 import RatingStars from "../components/RatingStars";
 import MovieCarousel from "../components/MovieCarousel";
 
-const VITE_API_KEY = import.meta.env.VITE_API_KEY;
+// REMOVEMOS A NECESSIDADE DA CHAVE DE API E URL BASE DO TMDB
 const VITE_IMG = import.meta.env.VITE_IMG;
 
 const Movie = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
-  const [credits, setCredits] = useState(null);
+  // Simplificamos o estado: agora temos cast e director separados
+  const [cast, setCast] = useState([]);
+  const [director, setDirector] = useState("");
   const [related, setRelated] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToWishlist, removeFromWishlist, isMovieInWishlist } =
     useWishlist();
 
-  const getMovieData = async (url) => {
-    const res = await fetch(url);
-    const data = await res.json();
-    return data;
-  };
-
+  // A função auxiliar foi removida, pois faremos a chamada diretamente
   useEffect(() => {
     const fetchAllData = async () => {
       setLoading(true);
-      const movieUrl = `https://api.themoviedb.org/3/movie/${id}?api_key=${VITE_API_KEY}&language=pt-BR`;
-      const creditsUrl = `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${VITE_API_KEY}&language=pt-BR`;
-      const relatedUrl = `https://api.themoviedb.org/3/movie/${id}/similar?api_key=${VITE_API_KEY}&language=pt-BR`;
-      const recommendationsUrl = `https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=${VITE_API_KEY}&language=pt-BR`;
+      
+      // 1. UMA ÚNICA CHAMADA PARA O NOSSO BACKEND
+      const url = `/api/movies/${id}`;
 
-      const [movieData, creditsData, relatedData, recommendationsData] =
-        await Promise.all([
-          getMovieData(movieUrl),
-          getMovieData(creditsUrl),
-          getMovieData(relatedUrl),
-          getMovieData(recommendationsUrl),
-        ]);
+      try {
+        const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error(`Erro ao buscar detalhes do filme: ${res.status}`);
+        }
+        const data = await res.json(); // data é o nosso MovieDetailsDTO completo
 
-      setMovie(movieData);
-      setCredits(creditsData);
-      setRelated(relatedData.results);
-      setRecommendations(recommendationsData.results);
+        // 2. POPULAMOS TODOS OS ESTADOS A PARTIR DE UMA ÚNICA RESPOSTA
+        setMovie(data.movie);
+        setCast(data.cast || []);
+        setDirector(data.director || "Não encontrado");
+        setRelated(data.similarMovies || []);
+        setRecommendations(data.recommendedMovies || []);
 
-      setLoading(false);
-      window.scrollTo(0, 0);
+      } catch (error) {
+        console.error(error);
+        // Opcional: setar um estado de erro para exibir na UI
+      } finally {
+        setLoading(false);
+        window.scrollTo(0, 0);
+      }
     };
 
     fetchAllData();
   }, [id]);
 
-  const getDirector = () => {
-    if (!credits) return "Não encontrado";
-    const director = credits.crew.find((person) => person.job === "Director");
-    return director ? director.name : "Não encontrado";
-  };
-
-  if (loading || !movie || !credits) {
+  // A função getDirector() não é mais necessária!
+  
+  if (loading || !movie) {
     return (
       <div className="flex justify-center items-center h-screen">
         <p>Carregando...</p>
@@ -67,13 +65,16 @@ const Movie = () => {
     );
   }
 
+  // O resto do seu JSX continua quase o mesmo, apenas ajustamos
+  // como ele acessa os dados do elenco e do diretor
+
   const isInWishlist = isMovieInWishlist(movie.id);
 
   const handleWishlistToggle = () => {
     if (isInWishlist) {
       removeFromWishlist(movie.id);
     } else {
-      addToWishlist(movie);
+      addToWishlist(movie); // O objeto 'movie' já contém os dados necessários
     }
   };
 
@@ -81,6 +82,7 @@ const Movie = () => {
     <div className="bg-[#F8F3ED] text-[#333] p-4 md:p-8">
       <main className="container mx-auto">
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Coluna da Imagem e Botões (sem alterações) */}
           <div className="flex flex-col items-center">
             <img
               src={VITE_IMG + movie.poster_path}
@@ -113,23 +115,24 @@ const Movie = () => {
             </button>
           </div>
 
+          {/* Coluna de Detalhes do Filme */}
           <div className="md:col-span-2">
-            <div className="flex justify-end space-x-2 mb-4"></div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               {movie.title}
             </h1>
             <p className="text-lg mb-6">{movie.overview}</p>
 
+            {/* AQUI ESTÁ A MUDANÇA EM COMO EXIBIMOS OS DADOS */}
             <div className="space-y-3 text-lg">
               <p>
                 <span className="font-bold">Elenco:</span>{" "}
-                {credits.cast
-                  .slice(0, 2)
+                {cast
+                  .slice(0, 5) // Podemos até mostrar mais atores agora
                   .map((actor) => actor.name)
                   .join(", ")}
               </p>
               <p>
-                <span className="font-bold">Diretor:</span> {getDirector()}
+                <span className="font-bold">Diretor:</span> {director}
               </p>
               <p>
                 <span className="font-bold">Lançamento:</span>{" "}
@@ -139,10 +142,28 @@ const Movie = () => {
                 <span className="font-bold">Gênero:</span>{" "}
                 {movie.genres.map((genre) => genre.name).join(", ")}
               </p>
+                {movie.watchProviders && movie.watchProviders.length > 0 && (
+               <div className="pt-4">
+                 <p className="font-bold text-lg">Disponível em:</p>
+               <div className="flex flex-wrap items-center gap-4 mt-2">
+                 {/* A MUDANÇA ESTÁ AQUI ABAIXO */}
+                  {movie.watchProviders.map((provider) => (
+                  <img 
+                    key={provider.provider_name} // MUDANÇA: de providerName para provider_name
+                    src={VITE_IMG + provider.logo_path} // MUDANÇA: de logoPath para logo_path
+                    alt={provider.provider_name} // MUDANÇA: de providerName para provider_name
+                    title={provider.provider_name} // MUDANÇA: de providerName para provider_name
+                    className="w-12 h-12 rounded-lg shadow-md"
+                  />
+            ))}
+                    </div>
+                 </div>
+              )}
             </div>
           </div>
         </section>
 
+        {/* Carrosséis (sem alterações) */}
         <MovieCarousel title="FILMES RELACIONADOS:" movies={related} />
         <MovieCarousel
           title="EXPERIÊNCIAS QUE VOCÊ PODE CURTIR:"
